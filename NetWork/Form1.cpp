@@ -34,7 +34,7 @@ void Form1::button2_Click(System::Object^  sender, System::EventArgs^  e)
 {
 	if (textBox1->Text!=""&&textBox2->Text!="")
 	calc(Convert::ToInt32(textBox1->Text), Convert::ToInt32(textBox2->Text),this);
-	else MessageBox::Show("Заполнить поля!");
+	else MessageBox::Show("Р—Р°РїРѕР»РЅРёС‚СЊ РїРѕР»СЏ!");
 }
 
 void ReadFile()
@@ -218,7 +218,7 @@ void calc(int x, int y, Form1 ^f)
 				if (check(x, y, i, MyArray, new bool[M]))
 				{
 					temp++;
-					line+= " Вершина № "+Convert::ToString(i) ;
+					line+= " Р’РµСЂС€РёРЅР° в„– "+Convert::ToString(i) ;
 				}
 
 			}
@@ -235,7 +235,7 @@ void calc(int x, int y, Form1 ^f)
 					if (check(y, x, i, MyArray, new bool[M]))
 					{
 						l++;
-						line1+= " Вершина № "+Convert::ToString(i) ;
+						line1+= " Р’РµСЂС€РёРЅР° в„– "+Convert::ToString(i) ;
 					}
 
 				}
@@ -243,8 +243,8 @@ void calc(int x, int y, Form1 ^f)
 		}
 	}
 	if (temp<l)
-	f->label1->Text ="Всего: "+ Convert::ToString(temp) +line;
+	f->label1->Text ="Р’СЃРµРіРѕ: "+ Convert::ToString(temp) +line;
 	else
-		f->label1->Text = "Всего: " + Convert::ToString(l) + line1;
+		f->label1->Text = "Р’СЃРµРіРѕ: " + Convert::ToString(l) + line1;
 
 }
