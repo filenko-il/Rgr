@@ -8,9 +8,9 @@ using namespace System::Windows::Forms;
 using namespace System::Drawing::Drawing2D;
 using namespace std;
 
-int N, M;
-int **coord;
-int **net;
+int N, M;//размер массива координат узлов - размер массива ребер
+int **coord;//координаты
+int **net;//ребра
 
 [STAThread]
 void main(cli::array<System::String^>^ arg) {
@@ -37,76 +37,80 @@ void Form1::button2_Click(System::Object^  sender, System::EventArgs^  e)
 	else MessageBox::Show("Заполнить поля!");
 }
 
-void ReadFile()
+void ReadFile()//чтение входных данных из файла
 {
 	int i = 0;
 	string line;
 	ifstream in("input.txt");
 	if (in.is_open())
 	{
-		getline(in, line);
-		N = atoi(line.c_str());
-		coord = new int* [N];
+		getline(in, line);//первая строка содержит количество узлов
+		N = atoi(line.c_str()); //приводим к int
+		coord = new int* [N];//объявляем двумерный динамический массив
 		for (int count = 0; count < N; count++)
 			coord[count] = new int[2];
-		while ((i<N))
+		while ((i<N))//пока не считаем все узлы
 		{
-			getline(in, line,' ');
-			coord[i][0]= atoi(line.c_str());
-			getline(in, line);
-			coord[i][1] = atoi(line.c_str());
+			getline(in, line,' ');//считываем строку до пробела
+			coord[i][0]= atoi(line.c_str());//координата х
+			getline(in, line);//считываем оставшуюся строку
+			coord[i][1] = atoi(line.c_str());//координата у
 			i++;
 		}
-		getline(in, line);
-		M = atoi(line.c_str());
-		net = new int*[M];
+		getline(in, line);//считываем количество ребер
+		M = atoi(line.c_str());//приводим к int
+		net = new int*[M];//объявляем двумерный динамический массив
 		for (int count = 0; count <M; count++)
 			net[count] = new int[2];
 		i = 0;
-		while ((i < M))
+		while ((i < M))//пока не считаем все ребра
 		{
-			getline(in, line, ' ');
-			net[i][0] = atoi(line.c_str());
-			getline(in, line);
-			net[i][ 1] = atoi(line.c_str());
+			getline(in, line, ' ');//считываем строку до пробела
+			net[i][0] = atoi(line.c_str());//откуда
+			getline(in, line);//считываем оставшуюся строку
+			net[i][ 1] = atoi(line.c_str());//куда
 			i++;
 		}
 	}
-	in.close();
+	in.close();//закрываем файл
 }
 
-void PrintMap(Form1 ^F)
+void PrintMap(Form1 ^F)//отображение сети на экране
 {
-	int r = 40;
-	Graphics ^g = F->map->CreateGraphics();
-	Brush ^b = gcnew SolidBrush(Color::Purple);
-	Pen ^p = gcnew Pen(b, 1);
-	Pen ^p1 = gcnew Pen(Color::DarkBlue, 3);
-	Font ^drawFont = gcnew Font("Arial", 16);
-	SolidBrush ^drawBrush = gcnew SolidBrush(Color::Black);
+	int r = 40;//радиус кругов
+	Graphics ^g = F->map->CreateGraphics();//область рисования, рисуем на панели
+	Brush ^b = gcnew SolidBrush(Color::Purple);//задаем кисть 
+	Pen ^p = gcnew Pen(b, 1);//задаем карандаш с толщиной 1 для рисования кругов
+	Pen ^p1 = gcnew Pen(Color::DarkBlue, 3);//задаем карандаш с толщиной 3 для рисования линий
+	Font ^drawFont = gcnew Font("Arial", 16);//задаем шрифт для надписей
+	SolidBrush ^drawBrush = gcnew SolidBrush(Color::Black);//кисть для надписей
 	for (int i = 0; i < N; i++)
 	{
-		g->DrawEllipse(p, coord[i][0] - r / 2, coord[i][1] - r/2, r, r);
-		g->DrawString(Convert::ToString(i), drawFont, drawBrush, coord[i][0] - 10, coord[i][1] - 10);
+		g->DrawEllipse(p, coord[i][0] - r / 2, coord[i][1] - r/2, r, r);//рисуем круг coord[i][0] - r / 2, coord[i][1] - r/2 - координаты верхнего левого угла
+		g->DrawString(Convert::ToString(i), drawFont, drawBrush, coord[i][0] - 10, coord[i][1] - 10);//рисуем надпись примерно в центре круга
 	}
 		//Pen pen = new Pen(Color.DarkBlue, 8);
 	for (int i = 0; i < M; i++)
 	{
-		g->DrawLine(p1, coord[net[i][0]][0], coord[net[i][0]][1], coord[net[i][1]][ 0], coord[net[i][1]][1]);
+		g->DrawLine(p1, coord[net[i][0]][0], coord[net[i][0]][1], coord[net[i][1]][ 0], coord[net[i][1]][1]);//рисуем ребра
 	}
 
 }
 
-int **arr(int **mas,int l)
+int **arr(int **mas,int l)//матрица расстояний
 {
-	int **MyArray = new int*[l];
+	//mas -  содержит информацию о ребрах 
+	int **MyArray = new int*[l];//объявляем двумерный массив
 	for (int count = 0; count < l; count++)
 		MyArray[count] = new int[l];
-	int inf = 20000000;
+	int inf = 20000000;//задаем большое число и заполняем им матрицу
+	//в принципе можно заполнить нулями
+	//но матрицу минимальных расстояний между всеми узлами мы получали в функции matr 
+	//как потом показала жизнь она не нужна
 	for (int i = 0; i < l; i++)
 		for (int j = 0; j < l; j++)
 			MyArray[i][j] = inf;
-	for (int i = 0; i < l; i++)
+	for (int i = 0; i < l; i++)//заполняем согласно заданных ребер
 	{
 		MyArray[mas[i][0]][mas[i][1]] = 1;
 		MyArray[mas[i][1]][mas[i][0]] = 1;
@@ -181,68 +185,83 @@ int **arr(int **mas,int l)
 //	}
 //	return net_t;
 //}
+/*
+x - первый узел который задал пользователь
+y - второй узел который задал пользователь
+t - текущий узел
+arr - матрица расстояний
+ch - массив, по которому мы проверяем были в этом узле или нет
+без него рекурсия станет бесконечной
+*/
 bool check(int x,int y, int t,int **arr,bool *ch)
 {
-	if (t == x)
+	if (t == x)//если мы нашли узел x возвращаем истину
 		return true;
-	for (int i = 0; i < M; i++)
+	for (int i = 0; i < N; i++)//проверяем все узлы
 	{
-		if (ch[i]!=true)
-		if (i!=y)
-		if (arr[t][i] == 1)
+		if (ch[i]!=true)//если мы его еще не проверяли
+		if (i!=y)//если он не равен заданному вторым
+		if (arr[t][i] == 1)//если расстояние от текущего до него равно 1
 		{
-			ch[i] = true;
-			if (check(x, y, i, arr, ch))
+			ch[i] = true;//побывали
+			if (check(x, y, i, arr, ch))//определяем есть ли у него связь с узлом x
 			{
-				return true;
+				return true; //если да, возвращаем истину
 			}
+			//иначе продолжаем проверять
 		}
 	}
-	return false;
+	return false; // если не найдена связь возвращаем ложь
 }
+/*
+x - первый узел который задал пользователь
+y - второй узел который задал пользователь
+f - указатель на форму
+*/
 void calc(int x, int y, Form1 ^f)
 {
 	System::String ^line = "",^line1="";
 	int temp=0;
 	int l = 0;
-	int **MyArray;
-	MyArray = arr(net, M);
-	 f->label1->Text = "";
-	if (MyArray[x][y] != 1 || MyArray[x][y] != 0)
+	int **MyArray;//объвляем матрицу расстояний
+	MyArray = arr(net, N);//получаем значения (передаем массив ребер и количество узлов)
+	 f->label1->Text = "";//метку очищаем
+	if (MyArray[x][y] != 1 && MyArray[x][y] != 0)//если x!=y и расстояние между ними не равно 1
 	{
-		for (int i = 0; i < M; i++)
+		for (int i = 0; i < N; i++)
 		{
-			if (i!=x)
-			if (MyArray[y][i] == 1)
+			if (i!=x)//если текущий не равен первому узлу
+			if (MyArray[y][i] == 1)//расстояние между вторым узлом и текущим равно 1
 			{
-				if (check(x, y, i, MyArray, new bool[M]))
+				if (check(x, y, i, MyArray, new bool[N]))//передаем первый, второй, текущий и массив bool
 				{
-					temp++;
-					line+= " Вершина № "+Convert::ToString(i) ;
+					temp++;//увеличиваем количество узлов
+					line+= " Узел № "+Convert::ToString(i) ;//записываем имя узла
 				}
 
 			}
 
 		}
 	}
-	if (MyArray[y][x] != 1 || MyArray[y][x] != 0)
+	if (MyArray[y][x] != 1 && MyArray[y][x] != 0)//если x!=y и расстояние между ними не равно 1
 	{
-		for (int i = 0; i < M; i++)
+		for (int i = 0; i < N; i++)
 		{
-			if (i != y)
-				if (MyArray[x][i] == 1)
+			if (i != y)//если текущий не равен второму узлу
+				if (MyArray[x][i] == 1)// расстояние между первым узлом и текущим равно 1
 				{
-					if (check(y, x, i, MyArray, new bool[M]))
+					if (check(y, x, i, MyArray, new bool[N])) // передаем  второй, первый, текущий и массив bool
 					{
-						l++;
-						line1+= " Вершина № "+Convert::ToString(i) ;
+						l++;//увеличиваем количество узлов
+						line1+= " Узел № "+Convert::ToString(i) ;//записываем имя узла
 					}
 
 				}
 
 		}
 	}
-	if (temp<l)
+	//проверяем с какой строны путь короче
+	if (temp<l) 
 	f->label1->Text ="Всего: "+ Convert::ToString(temp) +line;
 	else
 		f->label1->Text = "Всего: " + Convert::ToString(l) + line1;
