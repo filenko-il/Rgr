@@ -1,0 +1,6 @@
+﻿  Form1.cpp
+c:\users\79297\desktop\network\network\form1.cpp(16): warning C4829: Возможно, неправильные параметры функции main. Рекомендуемый вариант - "int main(Platform::Array<Platform::String^>^ argv)"
+c:\users\79297\desktop\network\network\form1.cpp(90): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+  .NETFramework,Version=v4.6.1.AssemblyAttributes.cpp
+  Form1.obj : обнаружен модуль MSIL; для MSIL последовательная компоновка отключена; выполняется полная компоновка
+  NetWork.vcxproj -> C:\Users\79297\Desktop\NetWork\Debug\NetWork.exe
